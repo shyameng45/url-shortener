@@ -9,18 +9,17 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class UrlController {
 
     private final UrlService urlService;
 
-    // POST /api/shorten → long URL do, short code milega
     @PostMapping("/api/shorten")
     public ResponseEntity<Url> shortenUrl(@RequestBody ShortenRequest request) {
         Url url = urlService.shortenUrl(request.getOriginalUrl());
         return ResponseEntity.ok(url);
     }
 
-    // GET /{shortCode} → original URL pe redirect
     @GetMapping("/{shortCode}")
     public ResponseEntity<Void> redirect(@PathVariable String shortCode) {
         Optional<Url> url = urlService.getOriginalUrl(shortCode);
@@ -30,7 +29,6 @@ public class UrlController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // GET /api/stats/{shortCode} → click count dekho
     @GetMapping("/api/stats/{shortCode}")
     public ResponseEntity<Url> getStats(@PathVariable String shortCode) {
         Optional<Url> url = urlService.getOriginalUrl(shortCode);
@@ -38,11 +36,9 @@ public class UrlController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Request body ke liye helper class
     static class ShortenRequest {
         private String originalUrl;
         public String getOriginalUrl() { return originalUrl; }
-        public void setOriginalUrl(String originalUrl) { this.originalUrl = originalUrl; }
+        public void setOriginalUrl(String o) { this.originalUrl = o; }
     }
 }
-

@@ -17,6 +17,13 @@ public class UrlService {
     @CachePut(value = "urls", key = "#result.shortCode")
     public Url shortenUrl(String originalUrl) {
         String shortCode = generateShortCode(originalUrl);
+
+        // Already exists? Return karo
+        Optional<Url> existing = urlRepository.findByShortCode(shortCode);
+        if (existing.isPresent()) {
+            return existing.get();
+        }
+
         Url url = new Url();
         url.setOriginalUrl(originalUrl);
         url.setShortCode(shortCode);
